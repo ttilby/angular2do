@@ -1,4 +1,6 @@
 import {Injectable} from 'angular2/core';
+import {Http, Response} from 'angular2/http';
+import 'rxjs/add/operator/map';
 
 export class Todo {
 
@@ -19,24 +21,23 @@ export class TodoService {
 
     items: Todo[];
 
-    constructor() {
-        this.items = [
-            new Todo('write an angular app')
-        ];
+    constructor(private http: Http) {
+        this.items = [];
     }
 
-    getTodos() {
-        return this.items;
+    getTodos(): Observable<Todo> {
+        return this.http.get('./app/todo/todos.json')
+        .map((res: Response) => res.json());
     }
 
-    addTodo(item: string) {
+    addTodo(item: string):Todo[] {
         if (item) {
             this.items.push(new Todo(item));
         }
         return this.items;
     }
 
-    toggleComplete(index) {
+    toggleComplete(index: number):Todo[] {
         this.items[index].completed = this.items[index].completed ? null : new Date();
         return this.items;
     }
